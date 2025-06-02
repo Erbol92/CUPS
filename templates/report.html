@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load tz %}
+
+{% block main %}
+<style>
+  .btn {
+    font-size: 0.825em!important;
+  }
+</style>
+<a href="{% url 'main' %}" class="btn btn-sm btn-outline-light">назад</a>
+
+<h1>Отчет за сегодня</h1>
+    <h2>Выручка: {{ total_revenue }} руб.</h2>
+
+    <h3>Заказы:</h3>
+    <div class="row border-top border-bottom">
+      <div class="col">Товар</div>
+      <div class="col">Количество</div>
+      <div class="col">Цена, руб.</div>
+      <div class="col">Время</div>
+      <div class="col">Работник</div>
+    </div>
+    {% for order in page_obj %}
+      <div class="row border-bottom">
+        <div class="col">{{ order.product.name }}</div>
+        <div class="col">{{ order.quantity }}</div>
+        <div class="col">{{ order.product.price }}</div>
+        <div class="col">{{ order.created_at|date:"H:i:s" }}</div>
+        <div class="col" title="{{order.user.get_full_name}}">{{ order.user }}</div>
+      </div>
+        
+    {% empty %}
+      <p>Нет заказов за сегодня.</p>
+    {% endfor %}
+    <div class="pagination justify-content-center mt-3">
+          <span class="step-links">
+              {% if page_obj.has_previous %}
+                  <a href="?page=1" class="btn btn-sm btn-primary">&laquo; 1</a>
+                  <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-primary">назад</a>
+              {% endif %}
+
+              <span class="current btn btn-sm btn-success">
+                  {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
+              </span>
+
+              {% if page_obj.has_next %}
+                  <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-primary">далее</a>
+                  <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-primary">{{ page_obj.paginator.num_pages }} &raquo;</a>
+              {% endif %}
+          </span>
+        </div>
+{% endblock %}

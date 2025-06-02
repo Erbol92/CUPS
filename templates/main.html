@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block main %}
+<header class="d-flex justify-content-between mb-4 align-items-center">
+  <div>
+    <img src="static/images/cups.jpg" alt="" width="72" height="72" class="rounded-pill">
+  </div>
+  <div>
+    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light">выход</a>
+    {% if request.user.is_staff %}
+    <a href="{% url 'report' %}" class="btn btn-sm btn-outline-light">отчетность</a>
+    {% endif %}
+  </div>
+</header>
+<div class="flex-container">
+    {% for group in groups %}
+    
+      <div class="flex-item">
+        {% if group.group_products.all %}  
+          <div class="text-uppercase border-top rounded-pill">
+            <h2 class="text-center">{{ group.name }}</h2>
+          </div>
+        {% endif %} 
+        {% regroup group.group_products.all by name as group_list %}
+          {% for group in group_list %}
+          <div class="justify-content-between d-flex p-2 border-bottom">
+            <div class="fw-bold">
+              <p>{{group.grouper}}</p>
+            </div>
+            <div class="">
+              {% for product in group.list %}
+                <button value="{{product.id}}" class="order_btn btn btn-sm btn-outline-light rounded-pill" data-toggle="tooltip" title="{{product.size}}">{{product.price}}</button> 
+              {% endfor %}
+            </div>
+            </div>
+          {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+<script>
+  const buttons = document.getElementsByClassName('order_btn');
+  Array.from(buttons).forEach(btn => {
+    btn.addEventListener('click', function addOrder() {
+      const productName = btn.value;
+      const quantity = prompt('количество?', 1);
+      console.log(quantity)
+      
+      if (quantity !== null )
+      fetch('/create-order/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': getCookie('csrftoken') // Получаем CSRF-токен
+        },
+        body: `product_name=${encodeURIComponent(productName)}&quantity=${quantity}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert(`Заказ добавлен! ${data.product} ${quantity} шт.`);
+        } else {
+          alert(`Ошибка при создании заказа.`);
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка:', error);
+        document.getElementById('result').innerHTML = 'Ошибка сети.';
+      });
+    })
+  });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Проверяем, начинается ли cookie с нужного имени
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}

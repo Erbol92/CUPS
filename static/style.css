@@ -1,0 +1,54 @@
+@font-face {
+font-family: "Finder";
+src: url("./fonts/Finder.ttf") format("truetype");
+font-style: normal;
+font-weight: bold;
+}
+
+body {
+    font-family: "Finder";
+    height: 100%;
+    font-size: 24px!important;
+    margin: 40px!important;
+}
+
+.btn {
+    font-size: 1em!important;
+}
+.form-signin {
+    transform: translate(-50%, -50%);
+    left:50%;
+    top:50%;
+    width: 400px;
+    position: absolute;
+
+}
+
+
+.flex-item {
+    box-sizing: border-box; /* Учитываем отступы и границы в ширине */
+    margin: 30px;
+    margin-top: 30px; /* Отступы между элементами */
+    
+}
+
+main {
+    max-width: 1440px;
+    margin: auto;
+}
+
+
+
+.mesg {
+    animation: fadeAnimation 3s forwards; /* Анимация */
+}
+@keyframes fadeAnimation {
+            0% {
+                opacity: 1; /* Начальное состояние */
+
+            }
+            100% {
+                opacity: 0; /* Конечное состояние */
+                display: none;
+            }
+        }
