@@ -36,6 +36,23 @@ def exit(request):
 def main(request):
      object_list = Product.objects.all()
      groups = CupGroup.objects.all()
+     if request.method == 'POST':
+        data = request.POST
+        print(data)
+        quantitys = data.getlist('quantity')
+        product_ids = data.getlist('product_id')
+        products = Product.objects.filter(id__in=product_ids)
+        products_dict = {p.id: p for p in products}
+        orders_to_create = []
+        for quantity, product_id in zip(quantitys,product_ids):
+            product = products_dict[int(product_id)]
+            order = Order(
+                product=product,
+                quantity=int(quantity),
+                user=request.user
+            )
+            orders_to_create.append(order)
+        Order.objects.bulk_create(orders_to_create)
      context = {
         'title':'основная',
         'object_list':object_list,
@@ -48,14 +65,27 @@ def create_order(request):
         product_id = request.POST.get('product_name')
         product = Product.objects.get(id=product_id)
         quantity = request.POST.get('quantity')
-        Order.objects.create(product=product, quantity=quantity, user=request.user)
-        return JsonResponse({'status': 'success', 'product': product.name})
+        # 
+        return JsonResponse({'status': 'success', 'product': {
+            'name':product.name,
+            'size':product.size.name,
+            'id':product.id,
+        }})
     return JsonResponse({'status': 'error'}, status=400)
 
 def report(request):
     today = timezone.localtime(timezone.now()).date()
     orders = Order.objects.filter(created_at__date=today)
-    paginator = Paginator(orders, 2)
+    product_quantities = (
+                            orders.values('product__name','product__size__name')  # Группируем по полю 'product'
+                            .annotate(
+                                total_quantity=Sum('quantity'),
+                                total_revenue=Sum(F('quantity') * F('product__price'))
+                                )  # Суммируем количество
+                            
+                            .order_by('-total_quantity')
+                        )
+    paginator = Paginator(orders, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     total_revenue = orders.aggregate(total=Sum(F('quantity') * F('product__price')))['total'] or 0
@@ -63,5 +93,6 @@ def report(request):
         'title':'отчет',
         'page_obj':page_obj,
         'total_revenue':total_revenue,
+        'product_quantities':product_quantities,
      }
     return render(request,'report.html', context)

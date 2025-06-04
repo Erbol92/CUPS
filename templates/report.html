@@ -6,12 +6,20 @@
   .btn {
     font-size: 0.825em!important;
   }
+  .col {
+    text-align: start;
+  }
 </style>
-<a href="{% url 'main' %}" class="btn btn-sm btn-outline-light">назад</a>
+
+<div class="d-flex">
+  <a href="{% url 'main' %}" class="m-2 btn btn-sm btn-outline-light">назад</a>
+  <button class="m-2 btn btn-sm btn-outline-light" id="cut">в разрезе по продукции</button>
+  
+</div>
 
 <h1>Отчет за сегодня</h1>
     <h2>Выручка: {{ total_revenue }} руб.</h2>
-
+    
     <h3>Заказы:</h3>
     <div class="row border-top border-bottom">
       <div class="col">Товар</div>
@@ -32,7 +40,7 @@
     {% empty %}
       <p>Нет заказов за сегодня.</p>
     {% endfor %}
-    <div class="pagination justify-content-center mt-3">
+    <div class="pagination justify-content-center mt-3 mb-3">
           <span class="step-links">
               {% if page_obj.has_previous %}
                   <a href="?page=1" class="btn btn-sm btn-primary">&laquo; 1</a>
@@ -49,4 +57,37 @@
               {% endif %}
           </span>
         </div>
+
+        <div id="cut_div" class="d-none">
+          <h2 class="text-center">в разрезе по продукции</h2>
+          <div class="row border-top border-bottom">
+            <div class="col">Товар</div>
+            <div class="col">Размер</div>
+            <div class="col">Количество</div>
+            <div class="col">Сумма, руб.</div>
+            
+          </div>
+          {% for sales in product_quantities %}
+          <div  class="row border-bottom">
+            <div class="col">{{sales.product__name}}</div>
+            <div class="col">{{sales.product__size__name}}</div>
+            <div class="col">{{sales.total_quantity}}</div>
+            <div class="col">{{sales.total_revenue}}</div>
+          </div>
+          {% endfor %}
+        </div>
+<script>
+  const cut = document.getElementById('cut');
+  const cutDiv = document.getElementById('cut_div');
+  cut.addEventListener('click', function () {
+    if (cutDiv.classList.contains('d-none')) {
+            cutDiv.classList.remove('d-none'); // Убираем класс, чтобы показать элемент
+            cutDiv.classList.add('d-block'); // Добавляем класс, чтобы установить display: block
+        } else {
+            cutDiv.classList.remove('d-block'); // Убираем класс, чтобы скрыть элемент
+            cutDiv.classList.add('d-none'); // Добавляем класс, чтобы установить display: none
+        }
+  })
+</script>
+
 {% endblock %}

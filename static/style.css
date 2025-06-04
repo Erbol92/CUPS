@@ -52,3 +52,11 @@ main {
                 display: none;
             }
         }
+
+.input-group-text {
+    width: 150px;
+}
+
+.input_order {
+    flex: 0 0 50px!important;
+}

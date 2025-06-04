@@ -38,14 +38,16 @@
         </div>
     {% endfor %}
 </div>
+<form id="order" class="position-absolute d-none" method="POST">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-warning w-100 mb-3">сформировать заказ</button>
+</form>
 <script>
   const buttons = document.getElementsByClassName('order_btn');
   Array.from(buttons).forEach(btn => {
     btn.addEventListener('click', function addOrder() {
       const productName = btn.value;
       const quantity = prompt('количество?', 1);
-      console.log(quantity)
-      
       if (quantity !== null )
       fetch('/create-order/', {
         method: 'POST',
@@ -58,7 +60,56 @@
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
-          alert(`Заказ добавлен! ${data.product} ${quantity} шт.`);
+          const order = document.getElementById('order');
+          order.classList.remove('d-none');
+          alert(`Заказ добавлен! ${data.product.name} ${quantity} шт.`);
+          // Создаем новый элемент div
+        const newOrderItem = document.createElement('div');
+        newOrderItem.className = 'input-group input-group-sm mb-3';
+
+        // Создаем элемент span
+        const productName = document.createElement('span');
+        productName.className = 'input-group-text fw-bold';
+        productName.id = `inputGroup_${data.product.id}`;
+        productName.textContent = `${data.product.name} (${data.product.size})`;
+
+        // Создаем элемент input
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'number';
+        quantityInput.className = 'form-control input_order';
+        quantityInput.setAttribute('aria-label', 'Sizing example input');
+        quantityInput.setAttribute('aria-describedby', `inputGroup_${data.product.id}`);
+        quantityInput.setAttribute('min',1);
+        quantityInput.name = 'quantity';
+        quantityInput.value = quantity;
+        
+        const hiddenIdInput = document.createElement('input');
+        hiddenIdInput.type = 'hidden';
+        hiddenIdInput.className = 'form-control input_order';
+        hiddenIdInput.setAttribute('aria-label', 'Sizing example input');
+        hiddenIdInput.setAttribute('aria-describedby', `inputGroup_${data.product.id}`);
+        hiddenIdInput.name = 'product_id';
+        hiddenIdInput.value = data.product.id;
+        // Создаем кнопку удаления
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn btn-sm btn-danger';
+        deleteButton.textContent = '✕';
+        
+        // Добавляем обработчик события для кнопки удаления
+        deleteButton.addEventListener('click', () => {
+            order.removeChild(newOrderItem);
+            const input_groups = document.getElementsByClassName('input-group');
+            if (input_groups.length === 0) order.classList.add('d-none');
+        });
+
+        // Добавляем элементы в новый div
+        newOrderItem.appendChild(productName);
+        newOrderItem.appendChild(quantityInput);
+        newOrderItem.appendChild(hiddenIdInput);
+        newOrderItem.appendChild(deleteButton); // Добавляем кнопку удаления
+
+        // Добавляем новый div в order
+        order.appendChild(newOrderItem);
         } else {
           alert(`Ошибка при создании заказа.`);
         }
