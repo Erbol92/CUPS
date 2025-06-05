@@ -4,7 +4,7 @@
 {% block main %}
 <header class="d-flex justify-content-between mb-4 align-items-center">
   <div>
-    <img src="static/images/cups.jpg" alt="" width="72" height="72" class="rounded-pill">
+    <img src="static/images/cups.PNG" alt="" width="96" height="96" class="rounded-pill">
   </div>
   <div>
     <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light">выход</a>
@@ -62,7 +62,7 @@
         if (data.status === 'success') {
           const order = document.getElementById('order');
           order.classList.remove('d-none');
-          alert(`Заказ добавлен! ${data.product.name} ${quantity} шт.`);
+          // alert(`Заказ добавлен! ${data.product.name} ${quantity} шт.`);
           // Создаем новый элемент div
         const newOrderItem = document.createElement('div');
         newOrderItem.className = 'input-group input-group-sm mb-3';

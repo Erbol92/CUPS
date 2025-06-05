@@ -19,7 +19,7 @@ def auth(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.info(request,f'привет {request.user}')
+                messages.info(request,f'👋 {request.user}')
                 return redirect('main')
     context = {
         'title': 'Авторизация',
@@ -29,6 +29,7 @@ def auth(request):
 
 @login_required
 def exit(request):
+    messages.info(request,f'👋 {request.user}')
     logout(request)
     return redirect('auth')
 
@@ -38,7 +39,6 @@ def main(request):
      groups = CupGroup.objects.all()
      if request.method == 'POST':
         data = request.POST
-        print(data)
         quantitys = data.getlist('quantity')
         product_ids = data.getlist('product_id')
         products = Product.objects.filter(id__in=product_ids)
@@ -53,6 +53,8 @@ def main(request):
             )
             orders_to_create.append(order)
         Order.objects.bulk_create(orders_to_create)
+        messages.info(request,'заказ оформлен')
+        return redirect('main')
      context = {
         'title':'основная',
         'object_list':object_list,

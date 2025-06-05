@@ -40,7 +40,7 @@ main {
 
 
 .mesg {
-    animation: fadeAnimation 3s forwards; /* Анимация */
+    animation: fadeAnimation 4s forwards; /* Анимация */
 }
 @keyframes fadeAnimation {
             0% {
@@ -59,4 +59,10 @@ main {
 
 .input_order {
     flex: 0 0 50px!important;
+}
+
+.messages {
+    position: absolute;
+    transform: translate(-50%, 0);
+    left:50%;
 }

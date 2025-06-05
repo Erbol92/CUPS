@@ -7,14 +7,15 @@
   <form method="POST" autocomplete="off"  id="loginForm">
     {% csrf_token %}
     <div class="text-center">
-        <img src="static/images/cups.jpg" alt="" width="72" height="72" class="rounded-pill">
+        <img src="static/images/cups.PNG" alt="" width="96" height="96" class="rounded-pill">
     </div>
     <h1 class="h3 mb-3 fw-normal text-center">авторизация</h1>
 
     {{login_form|crispy}}
-
-    <button class="w-100 btn btn-lg btn-primary" type="submit">вход</button>
-    <button class="w-100 btn btn-lg btn-warning" type="reset" id="reset">сброс</button>
+    <div class="d-flex">
+      <button class=" me-1 w-100 btn btn-lg btn-primary" type="submit">вход</button>
+      <button class="ms-1 w-100 btn btn-lg btn-danger" type="reset" id="reset">сброс</button>
+    </div>    
   </form>
 </main>
 
