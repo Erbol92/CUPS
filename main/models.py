@@ -28,6 +28,7 @@ class Product(models.Model):
     name = models.CharField('название', max_length=50)
     description = models.TextField('описание')
     price = models.PositiveIntegerField(verbose_name='цена за ед', default=300)
+    order_p = models.PositiveSmallIntegerField('порядок', default=0)
 
 
     def __str__(self):
@@ -36,7 +37,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'товар'
         verbose_name_plural = 'товары'
-        ordering = ['group','name']
+        ordering = ['group','order_p']
 
 class Order(models.Model):
     product = models.ForeignKey(Product, verbose_name='товар', on_delete=models.DO_NOTHING)

@@ -11,7 +11,7 @@ class CupSizeAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'size', 'group', 'price']
+    list_display = ['name', 'size', 'group', 'price', 'order_p']
     list_filter = ['group', 'name']
 
 @admin.register(Order)
