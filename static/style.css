@@ -83,3 +83,7 @@ main {
     transform: translate(0, -50%);
 }
 
+.navigator {
+    display: flex;
+    flex-direction: column;
+}
