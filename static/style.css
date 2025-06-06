@@ -8,8 +8,13 @@ font-weight: bold;
 body {
     font-family: "Finder";
     height: 100%;
-    font-size: 24px!important;
     margin: 40px!important;
+}
+
+.nav_buttons {
+    width: 100px;
+    display: inline-block;
+    margin: 5px;
 }
 
 .btn {
@@ -20,16 +25,21 @@ body {
     left:50%;
     top:50%;
     width: 400px;
-    position: absolute;
+    position: fixed;
 
 }
 
+.flex-container {
+    display: block; /* Используем Flexbox */
+}
 
 .flex-item {
     box-sizing: border-box; /* Учитываем отступы и границы в ширине */
     margin: 30px;
     margin-top: 30px; /* Отступы между элементами */
-    
+    flex: 1 1 45%; /* Каждый элемент занимает 45% ширины контейнера */
+    box-sizing: border-box; /* Учитываем отступы и границы в ширине */
+    margin: 10px; /* Отступы между элементами */
 }
 
 main {
@@ -66,3 +76,10 @@ main {
     transform: translate(-50%, 0);
     left:50%;
 }
+
+#order_form {
+    right:0%;
+    background-color: black;
+    transform: translate(0, -50%);
+}
+

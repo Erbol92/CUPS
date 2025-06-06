@@ -3,13 +3,13 @@
 
 {% block main %}
 <header class="d-flex justify-content-between mb-4 align-items-center">
-  <div>
+  <div class="m-4">
     <img src="static/images/cups.PNG" alt="" width="96" height="96" class="rounded-pill">
   </div>
-  <div>
-    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light">выход</a>
+  <div class="m-4 navigator">
+    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light nav_buttons">выход</a>
     {% if request.user.is_staff %}
-    <a href="{% url 'report' %}" class="btn btn-sm btn-outline-light">отчетность</a>
+    <a href="{% url 'report' %}" class="btn btn-sm btn-outline-light nav_buttons">отчетность</a>
     {% endif %}
   </div>
 </header>
@@ -30,7 +30,7 @@
             </div>
             <div class="">
               {% for product in group.list %}
-                <button value="{{product.id}}" class="order_btn btn btn-sm btn-outline-light rounded-pill" data-toggle="tooltip" title="{{product.size}}">{{product.price}}</button> 
+                <button value="{{product.id}}" class="order_btn btn btn-sm btn-outline-light rounded-pill p-2 fw-bold" data-toggle="tooltip" title="{{product.size}}">{{product.price}}</button> 
               {% endfor %}
             </div>
             </div>
@@ -38,10 +38,19 @@
         </div>
     {% endfor %}
 </div>
-<form id="order" class="position-absolute d-none" method="POST">
+<div class="d-flex position-fixed rounded-4" id="order_form">
+  <div class="shower">
+    <button type="button" class="btn btn-success h-100">
+      <i class="bi bi-eye-fill"></i>
+    </button>
+  </div>
+  <form id="order" class="d-none p-4" method="POST">
   {% csrf_token %}
+  <div id="order_inner">
+  </div>
   <button type="submit" class="btn btn-outline-warning w-100 mb-3">сформировать заказ</button>
 </form>
+</div>
 <script>
   const buttons = document.getElementsByClassName('order_btn');
   Array.from(buttons).forEach(btn => {
@@ -60,8 +69,9 @@
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
-          const order = document.getElementById('order');
-          order.classList.remove('d-none');
+          const order = document.getElementById('order_inner');
+          const order_main = document.getElementById('order');
+          // order_main.classList.remove('d-none');
           // alert(`Заказ добавлен! ${data.product.name} ${quantity} шт.`);
           // Создаем новый элемент div
         const newOrderItem = document.createElement('div');
@@ -99,7 +109,7 @@
         deleteButton.addEventListener('click', () => {
             order.removeChild(newOrderItem);
             const input_groups = document.getElementsByClassName('input-group');
-            if (input_groups.length === 0) order.classList.add('d-none');
+            if (input_groups.length === 0) order_main.classList.add('d-none');
         });
 
         // Добавляем элементы в новый div
@@ -136,5 +146,22 @@
     }
     return cookieValue;
   }
+
+  toggleBtn = document.querySelector('.shower > button');
+  toggleBtn.addEventListener('click', function () {
+    const order_main = document.getElementById('order');
+    const icon = toggleBtn.querySelector('i');
+    if (order_main.classList.contains('d-none')) {
+            order_main.classList.remove('d-none'); // Убираем класс, чтобы показать элемент
+            order_main.classList.add('d-block'); // Добавляем класс, чтобы установить display: block
+            icon.classList.remove('bi-eye-fill');
+            icon.classList.add('bi-eye-slash-fill');
+        } else {
+            order_main.classList.remove('d-block'); // Убираем класс, чтобы скрыть элемент
+            order_main.classList.add('d-none'); // Добавляем класс, чтобы установить display: none
+            icon.classList.add('bi-eye-fill');
+            icon.classList.remove('bi-eye-slash-fill');
+        }
+  })
 </script>
 {% endblock %}

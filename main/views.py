@@ -12,6 +12,8 @@ from django.db.models import Sum, F
 
 def auth(request):
     login_form = LoginForm(data=request.POST or None)
+    if request.user.is_authenticated:
+        return redirect('main')
     if request.method == 'POST':
         if login_form.is_valid():
             username = login_form.cleaned_data['username']
@@ -38,22 +40,27 @@ def main(request):
      object_list = Product.objects.all()
      groups = CupGroup.objects.all()
      if request.method == 'POST':
-        data = request.POST
-        quantitys = data.getlist('quantity')
-        product_ids = data.getlist('product_id')
-        products = Product.objects.filter(id__in=product_ids)
-        products_dict = {p.id: p for p in products}
-        orders_to_create = []
-        for quantity, product_id in zip(quantitys,product_ids):
-            product = products_dict[int(product_id)]
-            order = Order(
-                product=product,
-                quantity=int(quantity),
-                user=request.user
-            )
-            orders_to_create.append(order)
-        Order.objects.bulk_create(orders_to_create)
-        messages.info(request,'заказ оформлен')
+        data = request.POST.copy()
+        csrf_token = data.pop('csrfmiddlewaretoken', None)
+        print(data)
+        if data:
+            quantitys = data.getlist('quantity')
+            product_ids = data.getlist('product_id')
+            products = Product.objects.filter(id__in=product_ids)
+            products_dict = {p.id: p for p in products}
+            orders_to_create = []
+            for quantity, product_id in zip(quantitys,product_ids):
+                product = products_dict[int(product_id)]
+                order = Order(
+                    product=product,
+                    quantity=int(quantity),
+                    user=request.user
+                )
+                orders_to_create.append(order)
+            Order.objects.bulk_create(orders_to_create)
+            messages.info(request,'заказ оформлен')
+        else:
+            messages.info(request,'зачем отправлять пустой заказ')
         return redirect('main')
      context = {
         'title':'основная',
