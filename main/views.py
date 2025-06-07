@@ -8,6 +8,7 @@ from .forms import LoginForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
+from datetime import datetime
 # Create your views here.
 
 def auth(request):
@@ -83,16 +84,29 @@ def create_order(request):
     return JsonResponse({'status': 'error'}, status=400)
 
 def report(request):
-    today = timezone.localtime(timezone.now()).date()
-    orders = Order.objects.filter(created_at__date=today)
+    date_str = request.GET.get('date')
+    if date_str:
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    else:
+        date = datetime.now()
+    orders = Order.objects.filter(created_at__date=date)
     product_quantities = (
-                            orders.values('product__name','product__size__name')  # Группируем по полю 'product'
+                            orders.values('product__name','product__size__name','product__group__name')  # Группируем по полю 'product'
                             .annotate(
                                 total_quantity=Sum('quantity'),
                                 total_revenue=Sum(F('quantity') * F('product__price'))
                                 )  # Суммируем количество
                             
-                            .order_by('-total_quantity')
+                            .order_by('product__group__name','-total_quantity')
+                        )
+    size_quantities = (
+                            orders.values('product__group__name','product__size__name')  # Группируем по полю 'product'
+                            .annotate(
+                                total_quantity=Sum('quantity'),
+                                total_revenue=Sum(F('quantity') * F('product__price'))
+                                )  # Суммируем количество
+                            
+                            .order_by('product__group__name','-total_quantity')
                         )
     paginator = Paginator(orders, 10)
     page_number = request.GET.get("page")
@@ -100,8 +114,10 @@ def report(request):
     total_revenue = orders.aggregate(total=Sum(F('quantity') * F('product__price')))['total'] or 0
     context = {
         'title':'отчет',
-        'page_obj':page_obj,
-        'total_revenue':total_revenue,
-        'product_quantities':product_quantities,
+        'page_obj': page_obj,
+        'total_revenue': total_revenue,
+        'product_quantities': product_quantities,
+        'size_quantities': size_quantities,
+        'date': date,
      }
     return render(request,'report.html', context)

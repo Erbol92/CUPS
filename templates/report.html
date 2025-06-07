@@ -8,20 +8,29 @@
   }
   .col {
     text-align: start;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+  }
+  .input-group, .input-group-text {
+    width: inherit;
   }
 </style>
 
 <div class="d-flex">
   <a href="{% url 'main' %}" class="m-2 btn btn-sm btn-outline-light">назад</a>
   <button class="m-2 btn btn-sm btn-outline-light" id="cut">в разрезе по продукции</button>
-  
+  <button class="m-2 btn btn-sm btn-outline-light" id="cutSize">в разрезе по размерам</button>
+  <form class="m-2 input-group input-group-sm">
+    <button class="input-group-text btn btn-outline-light" id="inputGroup-sizing-sm" type="submit">дата</button>
+    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" name="date" value="{{date|date:'Y-m-d' }}">
+  </form>
 </div>
 
 <h1>Отчет за сегодня</h1>
     <h2>Выручка: {{ total_revenue }} руб.</h2>
     
     <h3>Заказы:</h3>
-    <div class="row border-top border-bottom">
+    <div class="row border-top border-bottom bg-info">
       <div class="col">Товар</div>
       <div class="col">Количество</div>
       <div class="col">Цена, руб.</div>
@@ -41,44 +50,85 @@
       <p>Нет заказов за сегодня.</p>
     {% endfor %}
     <div class="pagination justify-content-center mt-3 mb-3">
-          <span class="step-links">
-              {% if page_obj.has_previous %}
-                  <a href="?page=1" class="btn btn-sm btn-primary">&laquo; 1</a>
-                  <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-primary">назад</a>
-              {% endif %}
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?page=1&date={{ date|date:'Y-m-d' }}" class="btn btn-sm btn-primary">&laquo; 1</a>
+              <a href="?page={{ page_obj.previous_page_number }}&date={{ date|date:'Y-m-d' }}" class="btn btn-sm btn-primary">назад</a>
+          {% endif %}
 
-              <span class="current btn btn-sm btn-success">
-                  {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
-              </span>
-
-              {% if page_obj.has_next %}
-                  <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-primary">далее</a>
-                  <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-primary">{{ page_obj.paginator.num_pages }} &raquo;</a>
-              {% endif %}
+          <span class="current btn btn-sm btn-success">
+              {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}
           </span>
-        </div>
 
-        <div id="cut_div" class="d-none">
-          <h2 class="text-center">в разрезе по продукции</h2>
-          <div class="row border-top border-bottom">
-            <div class="col">Товар</div>
-            <div class="col">Размер</div>
-            <div class="col">Количество</div>
-            <div class="col">Сумма, руб.</div>
-            
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}&date={{ date|date:'Y-m-d' }}" class="btn btn-sm btn-primary">далее</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}&date={{ date|date:'Y-m-d' }}" class="btn btn-sm btn-primary">{{ page_obj.paginator.num_pages }} &raquo;</a>
+          {% endif %}
+      </span>
+    </div>
+
+    <div id="cut_div" class="d-none">
+      <h2 class="text-center">в разрезе по продукции</h2>
+      
+      {% regroup product_quantities by product__group__name as group_list %}
+      <div class="d-flex">
+        {% for group in group_list %}
+        
+          <div class="col p-3">
+            <div class="fw-bold text-center">
+              <p>{{group.grouper}}</p>
+            </div>
+            <div class="row border-top border-bottom bg-info">
+              <div class="col">Товар</div>
+              <div class="col">Размер</div>
+              <div class="col">Количество</div>
+              <div class="col">Сумма, руб.</div>
+            </div>
+            {% for product in group.list %}
+              <div  class="row border-bottom">
+                <div class="col text-lowercase">{{product.product__name}}</div>
+                <div class="col">{{product.product__size__name}}</div>
+                <div class="col">{{product.total_quantity}}</div>
+                <div class="col">{{product.total_revenue}}</div>
+              </div>
+            {% endfor %}
           </div>
-          {% for sales in product_quantities %}
-          <div  class="row border-bottom">
-            <div class="col">{{sales.product__name}}</div>
-            <div class="col">{{sales.product__size__name}}</div>
-            <div class="col">{{sales.total_quantity}}</div>
-            <div class="col">{{sales.total_revenue}}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div id="cut_div_size" class="d-none">
+      <h2 class="text-center">в разрезе по размерам</h2>
+      
+      {% regroup size_quantities by product__group__name as group_list %}
+      <div class="d-flex">
+        {% for group in group_list %}
+        
+          <div class="col p-3">
+            <div class="fw-bold text-center">
+              <p>{{group.grouper}}</p>
+            </div>
+            <div class="row border-top border-bottom bg-info">
+              <div class="col">Размер</div>
+              <div class="col">Количество</div>
+              <div class="col">Сумма, руб.</div>
+            </div>
+            {% for product in group.list %}
+              <div  class="row border-bottom">
+                <div class="col">{{product.product__size__name}}</div>
+                <div class="col">{{product.total_quantity}}</div>
+                <div class="col">{{product.total_revenue}}</div>
+              </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
+        {% endfor %}
+      </div>
+    </div>    
 <script>
   const cut = document.getElementById('cut');
+  const cutSize = document.getElementById('cutSize');
   const cutDiv = document.getElementById('cut_div');
+  const cutDivSize = document.getElementById('cut_div_size');
   cut.addEventListener('click', function () {
     if (cutDiv.classList.contains('d-none')) {
             cutDiv.classList.remove('d-none'); // Убираем класс, чтобы показать элемент
@@ -86,6 +136,15 @@
         } else {
             cutDiv.classList.remove('d-block'); // Убираем класс, чтобы скрыть элемент
             cutDiv.classList.add('d-none'); // Добавляем класс, чтобы установить display: none
+        }
+  })
+  cutSize.addEventListener('click', function () {
+    if (cutDivSize.classList.contains('d-none')) {
+            cutDivSize.classList.remove('d-none'); // Убираем класс, чтобы показать элемент
+            cutDivSize.classList.add('d-block'); // Добавляем класс, чтобы установить display: block
+        } else {
+            cutDivSize.classList.remove('d-block'); // Убираем класс, чтобы скрыть элемент
+            cutDivSize.classList.add('d-none'); // Добавляем класс, чтобы установить display: none
         }
   })
 </script>
