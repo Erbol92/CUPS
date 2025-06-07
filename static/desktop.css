@@ -26,6 +26,7 @@ body {
     right:0%;
     background-color: black;
     transform: translate(0, -50%);
+    top:50%;
 }
 
 .input-group-text {
