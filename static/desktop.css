@@ -1,0 +1,60 @@
+
+.flex-container {
+    display: flex; /* Используем Flexbox */
+    flex-wrap: wrap; /* Позволяем элементам переноситься на новую строку */
+    justify-content: center;
+}
+
+.flex-item {
+    display: block;
+    width: 45%;
+    margin: 10px;
+    /* flex: 1 1 45%; Каждый элемент занимает 45% ширины контейнера */
+    /* box-sizing: border-box; Учитываем отступы и границы в ширине */
+    /* margin: 10px; Отступы между элементами */
+    
+}
+
+body {
+    font-family: "Finder";
+    height: 100%;
+    margin: 40px!important;
+    font-size: 24px!important;
+}
+
+#order_form {
+    right:0%;
+    background-color: black;
+    transform: translate(0, -50%);
+}
+
+.input-group-text {
+    width: 200px;
+}
+
+.input_order {
+    flex: 0 0 50px!important;
+}
+
+.form-signin {
+    transform: translate(-50%, -50%);
+    left:50%;
+    top:50%;
+    width: 400px;
+    position: fixed;
+
+}
+
+.mesg {
+    animation: fadeAnimation 4s forwards; /* Анимация */
+}
+@keyframes fadeAnimation {
+            0% {
+                opacity: 1; /* Начальное состояние */
+
+            }
+            100% {
+                opacity: 0; /* Конечное состояние */
+                display: none;
+            }
+        }
