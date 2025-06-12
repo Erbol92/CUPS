@@ -17,7 +17,13 @@
 </style>
 
 <div class="d-flex">
-  <a href="{% url 'main' %}" class="m-2 btn btn-sm btn-outline-light">назад</a>
+  <div class="d-flex">
+    <div class="btn-group btn-group-sm m-2 mb-2" role="group" aria-label="Basic example" id="role">
+      <i class="bi bi-arrow-left"></i>
+      <a href="{% url 'main' 'no_alco' %}" class="btn btn-sm btn-outline-light">без алко</a>
+      <a href="{% url 'main' 'alco' %}" class="btn btn-sm btn-outline-light">алко</a>
+    </div>
+  </div>
   <button class="m-2 btn btn-sm btn-outline-light" id="cut">в разрезе по продукции</button>
   <button class="m-2 btn btn-sm btn-outline-light" id="cutSize">в разрезе по размерам</button>
   <form class="m-2 input-group input-group-sm">

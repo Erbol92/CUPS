@@ -14,7 +14,7 @@ from datetime import datetime
 def auth(request):
     login_form = LoginForm(data=request.POST or None)
     if request.user.is_authenticated:
-        return redirect('main')
+        return redirect('main/no_alco')
     if request.method == 'POST':
         if login_form.is_valid():
             username = login_form.cleaned_data['username']
@@ -23,7 +23,7 @@ def auth(request):
             if user is not None:
                 login(request, user)
                 messages.info(request,f'👋 {request.user}')
-                return redirect('main')
+                return redirect('main/no_alco')
     context = {
         'title': 'Авторизация',
         'login_form': login_form,
@@ -37,13 +37,11 @@ def exit(request):
     return redirect('auth')
 
 @login_required(login_url="/")
-def main(request):
-     object_list = Product.objects.all()
-     groups = CupGroup.objects.all()
+def main(request, room):
+     groups = CupGroup.objects.filter(room=room)
      if request.method == 'POST':
         data = request.POST.copy()
         csrf_token = data.pop('csrfmiddlewaretoken', None)
-        print(data)
         if data:
             quantitys = data.getlist('quantity')
             product_ids = data.getlist('product_id')
@@ -62,10 +60,9 @@ def main(request):
             messages.info(request,'заказ оформлен')
         else:
             messages.info(request,'зачем отправлять пустой заказ')
-        return redirect('main')
+        return redirect(request.META.get('HTTP_REFERER'))
      context = {
         'title':'основная',
-        'object_list':object_list,
         'groups': groups,
      }
      return render(request,'main.html', context)

@@ -14,6 +14,11 @@ class CupSize(models.Model):
 
 class CupGroup(models.Model):
     name = models.CharField('наименование группы', max_length=50)
+    CHOICE_ROOM = (
+        ('no_alco', 'безалкогольная комната'),
+        ('alco', 'алкогольная комната'),
+    )
+    room = models.CharField('комната', max_length=10, choices=CHOICE_ROOM, default='no_alco')
 
     def __str__(self):
         return self.name.upper()
@@ -29,10 +34,10 @@ class Product(models.Model):
     description = models.TextField('описание')
     price = models.PositiveIntegerField(verbose_name='цена за ед', default=300)
     order_p = models.PositiveSmallIntegerField('порядок', default=0)
-
+    enabled = models.BooleanField('действующая?', default=True)
 
     def __str__(self):
-        return self.name
+        return self.name.upper()
     
     class Meta:
         verbose_name = 'товар'

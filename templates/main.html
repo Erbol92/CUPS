@@ -4,7 +4,11 @@
 {% block main %}
 <header class="d-flex justify-content-between mb-4 align-items-center">
   <div class="m-4">
-    <img src="static/images/cups.PNG" alt="" width="96" height="96" class="rounded-pill">
+    <img src="/static/images/cups.PNG" alt="" width="96" height="96" class="rounded-pill">
+  </div>
+  <div class="btn-group m-2 mb-2" role="group" aria-label="Basic example" id="role">
+    <a href="{% url 'main' 'no_alco' %}" class="btn btn-outline-light">без алко</a>
+    <a href="{% url 'main' 'alco' %}" class="btn btn-outline-light">алко</a>
   </div>
   <div class="m-4 navigator">
     <a href="{% url 'logout' %}" class="btn btn-outline-light nav_buttons">выход</a>
@@ -13,6 +17,7 @@
     {% endif %}
   </div>
 </header>
+<hr class="fw-bold" style="color:antiquewhite;">
 <div class="flex-container">
     {% for group in groups %}
     
@@ -26,7 +31,7 @@
           {% for group in group_list %}
           <div class="justify-content-between d-flex p-2 border-bottom">
             <div class="fw-bold">
-              <p>{{group.grouper}}</p>
+              <p class="text-uppercase" title="{{group.list.0.description}}" data-toggle="tooltip">{{group.grouper}}</p>
             </div>
             <div class="">
               {% for product in group.list %}
