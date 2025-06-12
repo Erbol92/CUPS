@@ -1,8 +1,9 @@
-$(document).ready(function(){
-    // Инициализация всплывающих подсказок
+function initializeTooltips() {
     $('[data-toggle="tooltip"]').tooltip({
-        delay: { "show": 100, "hide": 100 } // Установите задержку появления и исчезновения
+        delay: { "show": 50, "hide": 100 }
     });
+}
+
+$(document).ready(function() {
+    initializeTooltips();
 });
-
-

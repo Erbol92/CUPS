@@ -80,6 +80,7 @@ def create_order(request):
             'name':product.name,
             'size':product.size.name,
             'id':product.id,
+            'price':product.price,
         }})
     return JsonResponse({'status': 'error'}, status=400)
 
