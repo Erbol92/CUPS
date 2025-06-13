@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
+  <i class="bi bi-measuring-cup"></i>
 {% block main %}
 <header class="d-flex justify-content-between mb-4 align-items-center">
   <div class="m-4">
     <img src="/static/images/cups.PNG" alt="" width="96" height="96" class="rounded-pill">
   </div>
   <div class="btn-group m-2 mb-2" role="group" aria-label="Basic example" id="role">
-    <a href="{% url 'main' 'no_alco' %}" class="btn btn-outline-light">без алко</a>
-    <a href="{% url 'main' 'alco' %}" class="btn btn-outline-light">алко</a>
+    <a href="{% url 'main' 'no_alco' %}" class="btn btn-outline-light"><img src="{% static '/images/cup.png' %}" width="64"></a>
+    <a href="{% url 'main' 'alco' %}" class="btn btn-outline-light"><img src="{% static '/images/beer.png' %}" width="64"></a>
   </div>
   <div class="m-4 navigator">
     <a href="{% url 'logout' %}" class="btn btn-outline-light nav_buttons">выход</a>

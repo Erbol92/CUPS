@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load tz %}
-
+{% load static %}
 {% block main %}
 <style>
   .btn {
@@ -15,27 +15,26 @@
     width: inherit;
   }
 </style>
-
-<div class="d-flex">
-  <div class="d-flex">
-    <div class="btn-group btn-group-sm m-2 mb-2" role="group" aria-label="Basic example" id="role">
-      <i class="bi bi-arrow-left"></i>
-      <a href="{% url 'main' 'no_alco' %}" class="btn btn-sm btn-outline-light">без алко</a>
-      <a href="{% url 'main' 'alco' %}" class="btn btn-sm btn-outline-light">алко</a>
-    </div>
+<div>
+  <div class="btn-group btn-group-sm m-2 mb-2" role="group" aria-label="Basic example" id="role">
+    <a href="{% url 'main' 'no_alco' %}" class="btn btn-outline-light"><img src="{% static '/images/cup.png' %}" width="64"></a>
+    <a href="{% url 'main' 'alco' %}" class="btn btn-outline-light"><img src="{% static '/images/beer.png' %}" width="64"></a>
   </div>
-  <button class="m-2 btn btn-sm btn-outline-light" id="cut">в разрезе по продукции</button>
-  <button class="m-2 btn btn-sm btn-outline-light" id="cutSize">в разрезе по размерам</button>
-  <form class="m-2 input-group input-group-sm">
-    <button class="input-group-text btn btn-outline-light" id="inputGroup-sizing-sm" type="submit">дата</button>
-    <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" name="date" value="{{date|date:'Y-m-d' }}">
-  </form>
+  <div class="float-end d-flex">
+    <button class="m-2 btn btn-sm btn-outline-light" id="cut">в разрезе по продукции</button>
+    <button class="m-2 btn btn-sm btn-outline-light" id="cutSize">в разрезе по размерам</button>
+    <form class="m-2 input-group input-group-sm">
+      <button class="input-group-text btn btn-outline-light" id="inputGroup-sizing-sm" type="submit">дата</button>
+      <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" name="date" value="{{date|date:'Y-m-d' }}">
+    </form>
+  </div>
 </div>
-
-<h1>Отчет за сегодня</h1>
-    <h2>Выручка: {{ total_revenue }} руб.</h2>
-    
-    <h3>Заказы:</h3>
+<hr>
+<div>
+  <h1>Отчет за сегодня</h1>
+  <h2>Выручка: {{ total_revenue }} руб.</h2>
+  <h3>Заказы:</h3>
+</div>
     <div class="row border-top border-bottom bg-info">
       <div class="col">Товар</div>
       <div class="col">Количество</div>
